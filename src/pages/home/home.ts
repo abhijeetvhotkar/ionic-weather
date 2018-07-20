@@ -16,20 +16,26 @@ export class HomePage {
   }
 
   constructor(public navCtrl: NavController,
-              private weatherProvider: WeatherProvider) {
+              private weatherProvider: WeatherProvider,
+              private storage: Storage) {
 
   }
 
   ionViewWillEnter() {
-    this.location = {
-      city: 'Miami',
-      state: 'FL'
-    }
-
-
-    this.weatherProvider.getWeather(this.location.city, this.location.state).subscribe(weather => {
-      // console.log(weather);
-      this.weather = weather;
-    });
+    this.storage.get('location')
+      .then((val) => {
+        if(val != null){
+          this.location = JSON.parse(val);
+        } else {
+          this.location = {
+            city: 'Baltimore',
+            state: 'MD'
+          }
+        }
+        this.weatherProvider.getWeather(this.location.city, this.location.state).subscribe(weather => {
+          // console.log(weather);
+          this.weather = weather;
+        });
+      });
   }
 }
